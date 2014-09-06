@@ -1,9 +1,9 @@
-name: 
+name: check_knuerr_cooltherm
 description: "file:///README.md"
 url: "https://www.netways.org/projects/plugins"
 tags: ~
-vendor: Netways
-target: Temperature
+vendor: Knuerr,NETWAYS
+target: Environmental,Sensor
 type: Plugin
 license: gplv2
 releases: 
@@ -15,5 +15,5 @@ releases:
         name: check_knuerr_cooltherm.pl
         url: "file:///check_knuerr_cooltherm.pl"
         description: none
-        checksum: 
+        checksum: 2f490402c37e7e3b9b06839ac73c4f7f
 
