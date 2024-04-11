@@ -1,0 +1,5281 @@
+KNUERR-COOLCON-MIB-V11 DEFINITIONS ::= BEGIN
+
+IMPORTS
+	MODULE-IDENTITY, OBJECT-TYPE, NOTIFICATION-TYPE, enterprises
+		FROM SNMPv2-SMI
+	DisplayString
+		FROM RFC1213-MIB
+	MODULE-COMPLIANCE, OBJECT-GROUP, NOTIFICATION-GROUP
+		FROM SNMPv2-CONF
+	TEXTUAL-CONVENTION
+		FROM SNMPv2-TC
+	;
+		
+coolingMib MODULE-IDENTITY
+	LAST-UPDATED "201105301500Z"
+	ORGANIZATION "Knuerr GmbH"
+	CONTACT-INFO
+		"Knürr Electronics GmbH
+		Glashüttenstr. 1
+		D-01623 Lommatzsch
+		Germany
+
+		www.knuerr.com
+		fon +49 035241 56-0
+		fax +49 035241 56-252"
+	DESCRIPTION
+		"The MIB for Knuerr cooling products CoolTherm and CoolLoop"
+	REVISION "200903170900Z"
+	DESCRIPTION
+		"Revision 9 by LP
+		 fanValveValues moved from 2.1.1.13 to 2.1.1.11
+		 new Trap varbinds
+		 
+		 Revision 10 by LP
+		 coolTrapWAlarm moved from 2.1.8.1.3 to 2.1.7.2.3 (CastleRock event filter works now)
+
+		 Revision 11 by LP
+		 coolEvent.eventStates added, shows arrInputs-array (1.3.6.1.2769.2.1.9.1)
+		 
+		 Revision 11a by LP
+		 bus error event added to alarm list"
+
+	::= { knuerr 10 }
+
+	
+	-- Type assignment
+	
+	
+AlarmState ::= INTEGER {
+	notActive(0),
+	active(1)
+}
+
+DigitalState ::= INTEGER {
+	OFF(0),
+	ON(1)
+}
+	
+	
+	-- End type assignment
+	
+
+knuerr OBJECT IDENTIFIER 	::= { enterprises 2769 }
+
+	cooling OBJECT IDENTIFIER 	::= { knuerr 2 }
+
+		coolControl OBJECT IDENTIFIER 	::= { cooling 1 }
+
+			coolEnvironment OBJECT IDENTIFIER 	::= { coolControl 1 }
+
+				temp1 OBJECT IDENTIFIER 	::= { coolEnvironment 1 }
+
+					temp1Name OBJECT-TYPE
+						SYNTAX  DisplayString
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The name of the temperature reading"
+						::= { temp1 1 }
+
+
+					temp1CalibrationOffset OBJECT-TYPE
+						SYNTAX  INTEGER (-100..100)
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Calibration offset in 0.1 degrees"
+						::= { temp1 2 }
+
+
+					temp1Current OBJECT-TYPE
+						SYNTAX  INTEGER (-20..100)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current temperature reading in °C"
+						::= { temp1 3 }
+
+
+					temp1SettingLevel OBJECT-TYPE
+						SYNTAX  INTEGER (30..50)
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The setting warm air temperature for air condition in °C"
+						::= { temp1 4 }
+
+
+					temp1WarningLevel OBJECT-TYPE
+						SYNTAX  INTEGER (30..55)
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The warning temperature for warm air in °C"
+						::= { temp1 5 }
+
+
+					temp1AlarmLevel OBJECT-TYPE
+						SYNTAX  INTEGER (35..60)
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The alarm temperature for warm air in °C"
+						::= { temp1 6 }
+
+
+				temp2 OBJECT IDENTIFIER 	::= { coolEnvironment 2 }
+
+					temp2Name OBJECT-TYPE
+						SYNTAX  DisplayString
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The name of the temperature reading"
+						::= { temp2 1 }
+
+
+					temp2CalibrationOffset OBJECT-TYPE
+						SYNTAX  INTEGER (-100..100)
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Calibration offset in 0.1 degrees"
+						::= { temp2 2 }
+
+
+					temp2Current OBJECT-TYPE
+						SYNTAX  INTEGER (-20..100)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current temperature reading in °C"
+						::= { temp2 3 }
+
+
+					temp2SettingLevel OBJECT-TYPE
+						SYNTAX  INTEGER (15..25)
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The setting cold air temperature for air condition in °C"
+						::= { temp2 4 }
+
+
+					temp2WarningLevel OBJECT-TYPE
+						SYNTAX  INTEGER (15..30)
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The warning temperature for cold air in °C"
+						::= { temp2 5 }
+
+
+					temp2AlarmLevel OBJECT-TYPE
+						SYNTAX  INTEGER (20..35)
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The alarm temperature for cold air in °C"
+						::= { temp2 6 }
+
+
+					temp2DoorsOpenLevel OBJECT-TYPE
+						SYNTAX  INTEGER (25..40)
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The door open temperature for cold air in °C"
+						::= { temp2 7 }
+
+
+					temp2ServerOFFLevel OBJECT-TYPE
+						SYNTAX  INTEGER (30..50)
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The server OFF temperature for cold air in °C"
+						::= { temp2 8 }
+
+
+				temp3 OBJECT IDENTIFIER 	::= { coolEnvironment 3 }
+
+					temp3Name OBJECT-TYPE
+						SYNTAX  DisplayString
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The name of the warm air temperature reading in rack left"
+						::= { temp3 1 }
+
+
+					temp3CalibrationOffset OBJECT-TYPE
+						SYNTAX  INTEGER (-100..100)
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Calibration offset in 0.1 degrees"
+						::= { temp3 2 }
+
+
+					temp3Current OBJECT-TYPE
+						SYNTAX  INTEGER (-20..100)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current temperature reading in °C"
+						::= { temp3 3 }
+
+
+					temp3WarningLevel OBJECT-TYPE
+						SYNTAX  INTEGER (15..60)
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The warning temperature for warm air in °C"
+						::= { temp3 4 }
+
+
+					temp3AlarmLevel OBJECT-TYPE
+						SYNTAX  INTEGER (20..60)
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The alarm temperature for warm air in °C"
+						::= { temp3 5 }
+
+
+				temp4 OBJECT IDENTIFIER 	::= { coolEnvironment 4 }
+
+					temp4Name OBJECT-TYPE
+						SYNTAX  DisplayString
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The name of the cold air temperature reading in rack left"
+						::= { temp4 1 }
+
+
+					temp4CalibrationOffset OBJECT-TYPE
+						SYNTAX  INTEGER (-100..100)
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Calibration offset in 0.1 degrees"
+						::= { temp4 2 }
+
+
+					temp4Current OBJECT-TYPE
+						SYNTAX  INTEGER (-20..100)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current temperature reading in °C"
+						::= { temp4 3 }
+
+
+					temp4WarningLevel OBJECT-TYPE
+						SYNTAX  INTEGER (15..60)
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The warning temperature for warm air in °C"
+						::= { temp4 4 }
+
+
+					temp4AlarmLevel OBJECT-TYPE
+						SYNTAX  INTEGER (20..60)
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The alarm temperature for warm air in °C"
+						::= { temp4 5 }
+
+
+				temp5 OBJECT IDENTIFIER 	::= { coolEnvironment 5 }
+
+					temp5Name OBJECT-TYPE
+						SYNTAX  DisplayString
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The name of the warm air temperature reading in rack left"
+						::= { temp5 1 }
+
+
+					temp5CalibrationOffset OBJECT-TYPE
+						SYNTAX  INTEGER (-100..100)
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Calibration offset in 0.1 degrees"
+						::= { temp5 2 }
+
+
+					temp5Current OBJECT-TYPE
+						SYNTAX  INTEGER (-20..100)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current temperature reading in °C"
+						::= { temp5 3 }
+
+
+					temp5WarningLevel OBJECT-TYPE
+						SYNTAX  INTEGER (15..60)
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The warning temperature for warm air in °C"
+						::= { temp5 4 }
+
+
+					temp5AlarmLevel OBJECT-TYPE
+						SYNTAX  INTEGER (20..60)
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The alarm temperature for warm air in °C"
+						::= { temp5 5 }
+
+
+				temp6 OBJECT IDENTIFIER 	::= { coolEnvironment 6 }
+
+					temp6Name OBJECT-TYPE
+						SYNTAX  DisplayString
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The name of the cold air temperature reading in rack right"
+						::= { temp6 1 }
+
+
+					temp6CalibrationOffset OBJECT-TYPE
+						SYNTAX  INTEGER (-100..100)
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Calibration offset in 0.1 degrees"
+						::= { temp6 2 }
+
+
+					temp6Current OBJECT-TYPE
+						SYNTAX  INTEGER (-20..100)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current temperature reading in °C"
+						::= { temp6 3 }
+
+
+					temp6WarningLevel OBJECT-TYPE
+						SYNTAX  INTEGER (15..60)
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The warning temperature for warm air in °C"
+						::= { temp6 4 }
+
+
+					temp6AlarmLevel OBJECT-TYPE
+						SYNTAX  INTEGER (20..60)
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The alarm temperature for warm air in °C"
+						::= { temp6 5 }
+
+
+				humidity OBJECT IDENTIFIER 	::= { coolEnvironment 7 }
+
+					humidityCurrent OBJECT-TYPE
+						SYNTAX  INTEGER (0..100)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current humidity reading in %rH"
+						::= { humidity 2 }
+
+
+					humidityLowAlarmLevel OBJECT-TYPE
+						SYNTAX  INTEGER (0..100)
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The lower alarm humidity in %rH"
+						::= { humidity 3 }
+
+
+					humidityHighAlarmLevel OBJECT-TYPE
+						SYNTAX  INTEGER (0..100)
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The humidity high alarm level in %rH"
+						::= { humidity 4 }
+
+
+				tempOutWater OBJECT IDENTIFIER 	::= { coolEnvironment 8 }
+
+					tempOutWaterCurrent OBJECT-TYPE
+						SYNTAX  INTEGER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current output water temperature reading in degrees"
+						::= { tempOutWater 2 }
+
+
+					tempOutWaterLoAlarmLevel OBJECT-TYPE
+						SYNTAX  INTEGER (0..300)
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The output water temperature low alarm level in degrees"
+						::= { tempOutWater 3 }
+
+
+					tempOutWaterHiAlarmLevel OBJECT-TYPE
+						SYNTAX  INTEGER (0..300)
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The output water temperature high alarm level in degrees"
+						::= { tempOutWater 4 }
+
+					tempOutWater2Current OBJECT-TYPE
+						SYNTAX  INTEGER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current output water 2 temperature reading in 0.1 degrees"
+						::= { tempOutWater 5 }
+
+
+				tempInWater OBJECT IDENTIFIER 	::= { coolEnvironment 9 }
+
+					tempInWaterCurrent OBJECT-TYPE
+						SYNTAX  INTEGER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current input water temperature reading in 0.1 degrees"
+						::= { tempInWater 2 }
+
+
+					tempInWaterLoAlarmLevel OBJECT-TYPE
+						SYNTAX  INTEGER (0..300)
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The input water temperature low alarm level in degrees"
+						::= { tempInWater 3 }
+
+
+					tempInWaterHiAlarmLevel OBJECT-TYPE
+						SYNTAX  INTEGER (0..300)
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The input water temperature high alarm level in degrees"
+						::= { tempInWater 4 }
+
+					tempInWater2Current OBJECT-TYPE
+						SYNTAX  INTEGER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current input water 2 temperature reading in 0.1 degrees"
+						::= { tempInWater 5 }
+
+
+	
+-- Wärmemengenzähler
+	
+				flowWater OBJECT IDENTIFIER 	::= { coolEnvironment 10 }
+
+					flowWaterCurrent OBJECT-TYPE
+						SYNTAX  INTEGER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current water flow reading in 0.1 litres per minute."
+						::= { flowWater 2 }
+
+					flowWaterCurrent2 OBJECT-TYPE
+						SYNTAX  INTEGER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current water flow reading in 0.1 litres per minute of second sensor."
+						::= { flowWater 3 }
+
+					coolingPower OBJECT-TYPE
+						SYNTAX  INTEGER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current cooling power in 0.1 kW."
+						::= { flowWater 4 }
+
+
+-- Bereich Ventilposition, Lüfterdrehzahl	
+	
+				fanValveValues OBJECT IDENTIFIER 	::= { coolEnvironment 11 }
+
+					fanSpeed OBJECT-TYPE
+						SYNTAX  INTEGER (0..200)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current fan speed reading in percent"
+						::= { fanValveValues 2 }
+
+					valvePosition OBJECT-TYPE
+						SYNTAX  INTEGER (0..200)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current valve position reading in percent"
+						::= { fanValveValues 3 }
+
+	
+	
+-- Energiewerte Rack 1 /CoolTherm	
+	
+				energyConsumptionMainsA1 OBJECT IDENTIFIER 	::= { coolEnvironment 12 }
+
+					currentL1A1 OBJECT-TYPE
+						SYNTAX  INTEGER (0..100)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Mains A current L1 in 0.1 ampere"
+						::= { energyConsumptionMainsA1 1 }
+
+					currentL2A1 OBJECT-TYPE
+						SYNTAX  INTEGER (0..100)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Mains A: current L2 in 0.1 ampere"
+						::= { energyConsumptionMainsA1 2 }
+
+					currentL3A1 OBJECT-TYPE
+						SYNTAX  INTEGER (0..100)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Mains A: current L3 in 0.1 ampere"
+						::= { energyConsumptionMainsA1 3 }
+
+					voltageL1A1 OBJECT-TYPE
+						SYNTAX  INTEGER (0..500)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Mains A: voltage between L1 and N in 0.1 volts"
+						::= { energyConsumptionMainsA1 4 }
+
+					voltageL2A1 OBJECT-TYPE
+						SYNTAX  INTEGER (0..500)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Mains A: voltage between L2 and N in 0.1 volts"
+						::= { energyConsumptionMainsA1 5 }
+
+					voltageL3A1 OBJECT-TYPE
+						SYNTAX  INTEGER (0..500)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Mains A: voltage between L3 and N in 0.1 volts"
+						::= { energyConsumptionMainsA1 6 }
+
+					activePowerMainsA1 OBJECT-TYPE
+						SYNTAX  INTEGER (0..100)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The power consumption of mains A in watt"
+						::= { energyConsumptionMainsA1 7 }
+
+					apparentPowerMainsA1 OBJECT-TYPE
+						SYNTAX  INTEGER (0..100)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The apparent power factor of mains A in VA"
+						::= { energyConsumptionMainsA1 8 }
+
+					reactivePowerMainsA1 OBJECT-TYPE
+						SYNTAX  INTEGER (0..100)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The reactive power factor of mains A in var"
+						::= { energyConsumptionMainsA1 9 }
+
+					cosphiA1 OBJECT-TYPE
+						SYNTAX  INTEGER (0..100)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The power factor of mains A Rack 1"
+						::= { energyConsumptionMainsA1 10 }
+
+					energyA1 OBJECT-TYPE
+						SYNTAX  INTEGER (0..100)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The energy of mains A Rack 1 in 0,1kWh"
+						::= { energyConsumptionMainsA1 11 }
+
+
+
+				energyConsumptionMainsB1 OBJECT IDENTIFIER 	::= { coolEnvironment 13 }
+
+					currentL1B1 OBJECT-TYPE
+						SYNTAX  INTEGER (0..1000)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Mains B current L1 in 0.1 ampere"
+						::= { energyConsumptionMainsB1 1 }
+
+					currentL2B1 OBJECT-TYPE
+						SYNTAX  INTEGER (0..1000)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Mains B: current L2 in 0.1 ampere"
+						::= { energyConsumptionMainsB1 2 }
+
+					currentL3B1 OBJECT-TYPE
+						SYNTAX  INTEGER (0..1000)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Mains B: current L3 in 0.1 ampere"
+						::= { energyConsumptionMainsB1 3 }
+
+					voltageL1B1 OBJECT-TYPE
+						SYNTAX  INTEGER (0..5000)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Mains B: voltage between L1 and N in 0.1 volts"
+						::= { energyConsumptionMainsB1 4 }
+
+					voltageL2B1 OBJECT-TYPE
+						SYNTAX  INTEGER (0..5000)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Mains B: voltage between L2 and N in 0.1 volts"
+						::= { energyConsumptionMainsB1 5 }
+
+					voltageL3B1 OBJECT-TYPE
+						SYNTAX  INTEGER (0..5000)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Mains B: voltage between L3 and N in 0.1 volts"
+						::= { energyConsumptionMainsB1 6 }
+
+					activePowerMainsB1 OBJECT-TYPE
+						SYNTAX  INTEGER (0..50000)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The power consumption of mains B in watt"
+						::= { energyConsumptionMainsB1 7 }
+
+					apparentPowerMainsB1 OBJECT-TYPE
+						SYNTAX  INTEGER (0..50000)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The apparent power factor of mains B in VA"
+						::= { energyConsumptionMainsB1 8 }
+
+					reactivePowerMainsB1 OBJECT-TYPE
+						SYNTAX  INTEGER (0..50000)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The reactive power factor of mains B in var"
+						::= { energyConsumptionMainsB1 9 }
+
+					cosphiB1 OBJECT-TYPE
+						SYNTAX  INTEGER (0..100)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The power factor of mains B in *100"
+						::= { energyConsumptionMainsB1 10 }
+
+					energyB1 OBJECT-TYPE
+						SYNTAX  INTEGER (0..100)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The energy of mains B Rack 1 in 0,1kWh"
+						::= { energyConsumptionMainsB1 11 }
+
+
+
+				-- Energiewerte Rack 2	
+					
+				energyConsumptionMainsA2 OBJECT IDENTIFIER 	::= { coolEnvironment 14 }
+
+					currentL1A2 OBJECT-TYPE
+						SYNTAX  INTEGER (0..1000)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Mains B current L1 in 0.1 ampere"
+						::= { energyConsumptionMainsA2 1 }
+
+					currentL2A2 OBJECT-TYPE
+						SYNTAX  INTEGER (0..1000)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Mains B: current L2 in 0.1 ampere"
+						::= { energyConsumptionMainsA2 2 }
+
+					currentL3A2 OBJECT-TYPE
+						SYNTAX  INTEGER (0..1000)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Mains B: current L3 in 0.1 ampere"
+						::= { energyConsumptionMainsA2 3 }
+
+					voltageL1A2 OBJECT-TYPE
+						SYNTAX  INTEGER (0..5000)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Mains B: voltage between L1 and N in 0.1 volts"
+						::= { energyConsumptionMainsA2 4 }
+
+					voltageL2A2 OBJECT-TYPE
+						SYNTAX  INTEGER (0..5000)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Mains B: voltage between L2 and N in 0.1 volts"
+						::= { energyConsumptionMainsA2 5 }
+
+					voltageL3A2 OBJECT-TYPE
+						SYNTAX  INTEGER (0..5000)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Mains B: voltage between L3 and N in 0.1 volts"
+						::= { energyConsumptionMainsA2 6 }
+
+					activePowerMainsA2 OBJECT-TYPE
+						SYNTAX  INTEGER (0..50000)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The power consumption of mains B in watt"
+						::= { energyConsumptionMainsA2 7 }
+
+					apparentPowerMainsA2 OBJECT-TYPE
+						SYNTAX  INTEGER (0..50000)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The apparent power factor of mains B in VA"
+						::= { energyConsumptionMainsA2 8 }
+
+					reactivePowerMainsA2 OBJECT-TYPE
+						SYNTAX  INTEGER (0..50000)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The reactive power factor of mains B in var"
+						::= { energyConsumptionMainsA2 9 }
+
+
+					cosphiA2 OBJECT-TYPE
+						SYNTAX  INTEGER (0..100)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The power factor of mains B in *100"
+						::= { energyConsumptionMainsA2 10 }
+
+					energyA2 OBJECT-TYPE
+						SYNTAX  INTEGER (0..100)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The energy of mains A Rack 2 in 0,1kWh"
+						::= { energyConsumptionMainsA2 11 }
+
+
+
+				energyConsumptionMainsB2 OBJECT IDENTIFIER 	::= { coolEnvironment 15 }
+
+					currentL1B2 OBJECT-TYPE
+						SYNTAX  INTEGER (0..1000)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Mains B current L1 in 0.1 ampere"
+						::= { energyConsumptionMainsB2 1 }
+
+
+					currentL2B2 OBJECT-TYPE
+						SYNTAX  INTEGER (0..1000)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Mains B: current L2 in 0.1 ampere"
+						::= { energyConsumptionMainsB2 2 }
+
+
+					currentL3B2 OBJECT-TYPE
+						SYNTAX  INTEGER (0..1000)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Mains B: current L3 in 0.1 ampere"
+						::= { energyConsumptionMainsB2 3 }
+
+
+					voltageL1B2 OBJECT-TYPE
+						SYNTAX  INTEGER (0..5000)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Mains B: voltage between L1 and N in 0.1 volts"
+						::= { energyConsumptionMainsB2 4 }
+
+
+					voltageL2B2 OBJECT-TYPE
+						SYNTAX  INTEGER (0..5000)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Mains B: voltage between L2 and N in 0.1 volts"
+						::= { energyConsumptionMainsB2 5 }
+
+
+					voltageL3B2 OBJECT-TYPE
+						SYNTAX  INTEGER (0..5000)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Mains B: voltage between L3 and N in 0.1 volts"
+						::= { energyConsumptionMainsB2 6 }
+
+
+					activePowerMainsB2 OBJECT-TYPE
+						SYNTAX  INTEGER (0..50000)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The power consumption of mains B in watt"
+						::= { energyConsumptionMainsB2 7 }
+
+
+					apparentPowerMainsB2 OBJECT-TYPE
+						SYNTAX  INTEGER (0..50000)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The apparent power factor of mains B in VA"
+						::= { energyConsumptionMainsB2 8 }
+
+
+					reactivePowerMainsB2 OBJECT-TYPE
+						SYNTAX  INTEGER (0..50000)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The reactive power factor of mains B in var"
+						::= { energyConsumptionMainsB2 9 }
+
+
+					cosphiB2 OBJECT-TYPE
+						SYNTAX  INTEGER (0..100)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The power factor of mains B in *100"
+						::= { energyConsumptionMainsB2 10 }
+
+					energyB2 OBJECT-TYPE
+						SYNTAX  INTEGER (0..100)
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The energy of mains B Rack 2 in 0,1kWh"
+						::= { energyConsumptionMainsB2 11 }
+
+
+	
+-- digital contacts
+	
+			coolContact OBJECT IDENTIFIER 	::= { coolControl 2 }
+
+					contactBasisCurrentStates OBJECT IDENTIFIER 	::= { coolContact 4 }
+
+						fan1CurrentState OBJECT-TYPE
+							SYNTAX  DigitalState
+							MAX-ACCESS read-only
+							STATUS  current
+							DESCRIPTION
+								"The current state of the fan 1 contact"
+							::= { contactBasisCurrentStates 1 }
+
+
+					fan2CurrentState OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current state of the fan 2 contact"
+						::= { contactBasisCurrentStates 2 }
+
+
+					fan3CurrentState OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current state of the fan 3 contact"
+						::= { contactBasisCurrentStates 3 }
+
+
+					fan4CurrentState OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current state of the fan 4 contact"
+						::= { contactBasisCurrentStates 4 }
+
+
+					waterCurrentState OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current state of water sensor contact"
+						::= { contactBasisCurrentStates 5 }
+
+
+					smokeCurrentState OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current state of smoke detector contact"
+						::= { contactBasisCurrentStates 6 }
+
+
+					mainsACurrentState OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current state of mains A contact"
+						::= { contactBasisCurrentStates 7 }
+
+
+					mainsBCurrentState OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current state of input 8 contact"
+						::= { contactBasisCurrentStates 8 }
+
+
+				contactSmokeExtingCurrentStates OBJECT IDENTIFIER 	::= { coolContact 5 }
+
+					smokePreAlarm1CurrentState OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current state of smoke pre-alarm 1 contact"
+						::= { contactSmokeExtingCurrentStates 1 }
+
+
+					smokeMainAlarm1CurrentState OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current state of smoke main alarm 1 contact"
+						::= { contactSmokeExtingCurrentStates 2 }
+
+
+					smokeDefectCurrentState OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current state of smoke defekt contact"
+						::= { contactSmokeExtingCurrentStates 3 }
+
+
+					smokeExtinguishedCurrentState OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current state of extinguishing released contact"
+						::= { contactSmokeExtingCurrentStates 4 }
+
+
+					smokePreAlarm2CurrentState OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current state of smoke pre-alarm 2 contact"
+						::= { contactSmokeExtingCurrentStates 5 }
+
+
+					smokeMainAlarm2CurrentState OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current state of smoke main alarm 2 contact"
+						::= { contactSmokeExtingCurrentStates 6 }
+
+
+				contactDoorCurrentStates OBJECT IDENTIFIER 	::= { coolContact 6 }
+
+					doorLeftFrontCurrentState OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current state of rack left door front contact"
+						::= { contactDoorCurrentStates 1 }
+
+
+					doorLeftRearCurrentState OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current state of rack left door rear contact"
+						::= { contactDoorCurrentStates 2 }
+
+
+					doorRightFrontCurrentState OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current state of rack right door front contact"
+						::= { contactDoorCurrentStates 3 }
+
+
+					doorRightRearCurrentState OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current state of rack right door rear contact"
+						::= { contactDoorCurrentStates 4 }
+
+
+					doorCoolFrontCurrentState OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current state of Cool-Loop(-Therm) door front contact"
+						::= { contactDoorCurrentStates 5 }
+
+
+					doorCoolRearCurrentState OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current state of Cool-Loop(-Therm) door rear contact"
+						::= { contactDoorCurrentStates 6 }
+
+
+				contactBasisTrapEnables OBJECT IDENTIFIER 	::= { coolContact 7 }
+
+					fan1TrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to 0 for trap disabled, 1 for enabled"
+						::= { contactBasisTrapEnables 1 }
+
+
+					fan2TrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to 0 for trap disabled, 1 for enabled"
+						::= { contactBasisTrapEnables 2 }
+
+
+					fan3TrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to 0 for trap disabled, 1 for enabled"
+						::= { contactBasisTrapEnables 3 }
+
+
+					fan4TrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to 0 for trap disabled, 1 for enabled"
+						::= { contactBasisTrapEnables 4 }
+
+
+					waterTrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to 0 for trap disabled, 1 for enabled"
+						::= { contactBasisTrapEnables 5 }
+
+
+					smokeTrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to 0 for trap disabled, 1 for enabled"
+						::= { contactBasisTrapEnables 6 }
+
+
+					mainsATrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to 0 for trap disabled, 1 for enabled"
+						::= { contactBasisTrapEnables 7 }
+
+
+					mainsBTrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to 0 for trap disabled, 1 for enabled"
+						::= { contactBasisTrapEnables 8 }
+
+
+				contactSmokeExtingTrapEnables OBJECT IDENTIFIER 	::= { coolContact 8 }
+
+					smokePreAlarm1TrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to 0 for trap disabled, 1 for enabled"
+						::= { contactSmokeExtingTrapEnables 1 }
+
+
+					smokeMainAlarm1TrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to 0 for trap disabled, 1 for enabled"
+						::= { contactSmokeExtingTrapEnables 2 }
+
+
+					smokeDefectTrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to 0 for trap disabled, 1 for enabled"
+						::= { contactSmokeExtingTrapEnables 3 }
+
+
+					smokeExtinguishedTrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to 0 for trap disabled, 1 for enabled"
+						::= { contactSmokeExtingTrapEnables 4 }
+
+
+					smokePreAlarm2TrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to 0 for trap disabled, 1 for enabled"
+						::= { contactSmokeExtingTrapEnables 5 }
+
+
+					smokeMainAlarm2TrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to 0 for trap disabled, 1 for enabled"
+						::= { contactSmokeExtingTrapEnables 6 }
+
+
+				contactDoorTrapEnables OBJECT IDENTIFIER 	::= { coolContact 9 }
+
+					doorLeftFrontTrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to 0 for trap disabled, 1 for enabled"
+						::= { contactDoorTrapEnables 1 }
+
+
+					doorLeftRearTrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to 0 for trap disabled, 1 for enabled"
+						::= { contactDoorTrapEnables 2 }
+
+
+					doorRightFrontTrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to 0 for trap disabled, 1 for enabled"
+						::= { contactDoorTrapEnables 3 }
+
+
+					doorRightRearTrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to 0 for trap disabled, 1 for enabled"
+						::= { contactDoorTrapEnables 4 }
+
+
+					doorCoolFrontTrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to 0 for trap disabled, 1 for enabled"
+						::= { contactDoorTrapEnables 5 }
+
+
+					doorCoolRearTrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to 0 for trap disabled, 1 for enabled"
+						::= { contactDoorTrapEnables 6 }
+
+
+
+-- digital outputs	
+	
+			coolOutput OBJECT IDENTIFIER 	::= { coolControl 3 }
+
+				outputEnables OBJECT IDENTIFIER 	::= { coolOutput 1 }
+
+					out1Enable OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to '1' enables the output"
+						::= { outputEnables 1 }
+
+					out2Enable OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to '1' enables the output"
+						::= { outputEnables 2 }
+
+					out3Enable OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to '1' enables the output"
+						::= { outputEnables 3 }
+
+					out4Enable OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to '1' enables the output"
+						::= { outputEnables 4 }
+
+
+				outputNames OBJECT IDENTIFIER 	::= { coolOutput 2 }
+
+					out1Name OBJECT-TYPE
+						SYNTAX  DisplayString
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The name of output 1"
+						::= { outputNames 1 }
+
+					out2Name OBJECT-TYPE
+						SYNTAX  DisplayString
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The name of output 2"
+						::= { outputNames 2 }
+
+					out3Name OBJECT-TYPE
+						SYNTAX  DisplayString
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The name of output 3"
+						::= { outputNames 3 }
+
+					out4Name OBJECT-TYPE
+						SYNTAX  DisplayString
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The name of output 4"
+						::= { outputNames 4 }
+
+
+				outputStates OBJECT IDENTIFIER 	::= { coolOutput 3 }
+
+					out1State OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current State of output 1, '1' is enabled, '0' is not enabled."
+						::= { outputStates 1 }
+
+					out2State OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current State of output 2, '1' is enabled, '0' is not enabled."
+						::= { outputStates 2 }
+
+					out3State OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current State of output 3, '1' is enabled, '0' is not enabled."
+						::= { outputStates 3 }
+
+					out4State OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current State of output 4, '1' is enabled, '0' is not enabled."
+						::= { outputStates 4 }
+
+
+				outputTrapEnables OBJECT IDENTIFIER 	::= { coolOutput 4 }
+
+					out1TrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to '0' for trap disabled, '1' for enabled"
+						::= { outputTrapEnables 1 }
+
+					out2TrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to '0' for trap disabled, '1' for enabled"
+						::= { outputTrapEnables 2 }
+
+					out3TrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to '0' for trap disabled, '1' for enabled"
+						::= { outputTrapEnables 3 }
+
+					out4TrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to '0' for trap disabled, '1' for enabled"
+						::= { outputTrapEnables 4 }
+
+	
+-- Erweiterungen
+
+			coolExtensions OBJECT IDENTIFIER 	::= { coolControl 4 }
+
+				extensionStates OBJECT IDENTIFIER 	::= { coolExtensions 2 }
+
+					extFanStopState OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current state of fan stop signal."
+						::= { extensionStates 1 }
+
+					extLeakageSensorState OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current state of external leakage sensor."
+						::= { extensionStates 2 }
+
+					extCondensatePumpState OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current state of condensate pump."
+						::= { extensionStates 3 }
+
+					extExternalContact1State OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current state of external contact 1 (user defined)."
+						::= { extensionStates 4 }
+
+					extExternalContact2State OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"The current state of external contact 2 (user defined)."
+						::= { extensionStates 5 }
+
+
+					
+				extensionTrapEnables OBJECT IDENTIFIER 	::= { coolExtensions 3 }
+
+					extFanStopTrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The trap enable of fan stop signal."
+						::= { extensionTrapEnables 1 }
+
+					extLeakageSensorTrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The trap enable of external leakage sensor."
+						::= { extensionTrapEnables 2 }
+
+					extCondensatePumpTrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The trap enable of condensate pump."
+						::= { extensionTrapEnables 3 }
+
+					extExternalContact1TrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The trap enable of external contact 1 (user defined)."
+						::= { extensionTrapEnables 4 }
+
+					extExternalContact2TrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The trap enable of external contact 2 (user defined)."
+						::= { extensionTrapEnables 5 }
+						
+
+
+
+			-- digital inputs	
+				
+			coolInput OBJECT IDENTIFIER 	::= { coolControl 6 }
+
+				inputNames OBJECT IDENTIFIER 	::= { coolInput 1 }
+
+					in1Name OBJECT-TYPE
+						SYNTAX  DisplayString
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The name of input 1"
+						::= { inputNames 1 }
+
+					in2Name OBJECT-TYPE
+						SYNTAX  DisplayString
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The name of input 2"
+						::= { inputNames 2 }
+
+					in3Name OBJECT-TYPE
+						SYNTAX  DisplayString
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The name of input 3"
+						::= { inputNames 3 }
+
+					in4Name OBJECT-TYPE
+						SYNTAX  DisplayString
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The name of input 4"
+						::= { inputNames 4 }
+
+					in5Name OBJECT-TYPE
+						SYNTAX  DisplayString
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The name of input 5"
+						::= { inputNames 5 }
+
+					in6Name OBJECT-TYPE
+						SYNTAX  DisplayString
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The name of input 6"
+						::= { inputNames 6 }
+
+					in7Name OBJECT-TYPE
+						SYNTAX  DisplayString
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The name of input 7"
+						::= { inputNames 7 }
+
+					in8Name OBJECT-TYPE
+						SYNTAX  DisplayString
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"The name of input 8"
+						::= { inputNames 8 }
+
+
+				inputStates OBJECT IDENTIFIER 	::= { coolInput 2 }
+
+					in1State OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of input 1, '1' is enabled, '0' is not enabled."
+						::= { inputStates 1 }
+
+					in2State OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of input 2, '1' is enabled, '0' is not enabled."
+						::= { inputStates 2 }
+
+					in3State OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of input 3, '1' is enabled, '0' is not enabled."
+						::= { inputStates 3 }
+
+					in4State OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of input 4, '1' is enabled, '0' is not enabled."
+						::= { inputStates 4 }
+
+					in5State OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of input 5, '1' is enabled, '0' is not enabled."
+						::= { inputStates 5 }
+
+					in6State OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of input 6, '1' is enabled, '0' is not enabled."
+						::= { inputStates 6 }
+
+					in7State OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of input 7, '1' is enabled, '0' is not enabled."
+						::= { inputStates 7 }
+
+					in8State OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of input 8, '1' is enabled, '0' is not enabled."
+						::= { inputStates 8 }
+
+
+				inputTrapEnables OBJECT IDENTIFIER 	::= { coolInput 3 }
+
+					in1TrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to '0' for trap disabled, '1' for enabled"
+						::= { inputTrapEnables 1 }
+
+
+					in2TrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to '0' for trap disabled, '1' for enabled"
+						::= { inputTrapEnables 2 }
+
+
+					in3TrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to '0' for trap disabled, '1' for enabled"
+						::= { inputTrapEnables 3 }
+
+
+					in4TrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to '0' for trap disabled, '1' for enabled"
+						::= { inputTrapEnables 4 }
+
+					in5TrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to '0' for trap disabled, '1' for enabled"
+						::= { inputTrapEnables 5 }
+
+					in6TrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to '0' for trap disabled, '1' for enabled"
+						::= { inputTrapEnables 6 }
+
+					in7TrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to '0' for trap disabled, '1' for enabled"
+						::= { inputTrapEnables 7 }
+
+					in8TrapEn OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-write
+						STATUS  current
+						DESCRIPTION
+							"Set to '0' for trap disabled, '1' for enabled"
+						::= { inputTrapEnables 8 }
+
+			
+			
+	
+-- Begin Traps
+	
+			coolTrap OBJECT IDENTIFIER 	::= { coolControl 5 }
+
+				coolTraps OBJECT IDENTIFIER 	::= { coolTrap 0 }
+
+					fans NOTIFICATION-TYPE
+						OBJECTS {
+							fan1Norm,
+							fan1Alarm,
+							fan2Norm,
+							fan2Alarm,
+							fan3Norm,
+							fan3Alarm,
+							fan4Norm,
+							fan4Alarm}
+						STATUS  current
+						DESCRIPTION
+							"fan error alarms"
+						::= { coolTraps 1 }
+
+
+					watersensor NOTIFICATION-TYPE
+						OBJECTS {
+							waterNorm,
+							waterAlarm,
+							fanStopNorm,
+							fanStopAlarm,
+							leakageNorm,
+							leakageAlarm}
+						STATUS  current
+						DESCRIPTION "water-sensor, leakage-sensor and fan-stop alarm "
+						::= { coolTraps 2 }
+
+
+					smokeDetect NOTIFICATION-TYPE
+						OBJECTS {
+							smokeNorm,
+							smokeAlarm,
+							smokePreAlarm1Norm,
+							smokePreAlarm1Alarm,
+							smokeMainAlarm1Norm,
+							smokeMainAlarm1Alarm,
+							smokeDefectNorm,
+							smokeDefectAlarm,
+							smokeExtinguishedNorm,
+							smokeExtinguishedAlarm,
+							smokePreAlarm2Norm,
+							smokePreAlarm2Alarm,
+							smokeMainAlarm2Norm,
+							smokeMainAlarm2Alarm}
+						STATUS  current
+						DESCRIPTION "smoke sensor and smoke extinguishing system alarms"
+						::= { coolTraps 3 }
+
+
+					mainsControl NOTIFICATION-TYPE
+						OBJECTS {
+							mainsANorm,
+							mainsAAlarm,
+							mainsBNorm,
+							mainsBAlarm}
+						STATUS  current
+						DESCRIPTION "mains A/B switch error"
+						::= { coolTraps 4 }
+
+
+					doors NOTIFICATION-TYPE
+						OBJECTS {
+							doorLeftFrontNorm,
+							doorLeftFrontAlarm,
+							doorLeftRearNorm,
+							doorLeftRearAlarm,
+							doorRightFrontNorm,
+							doorRightFrontAlarm,
+							doorRightRearNorm,
+							doorRightRearAlarm,
+							doorCfrontNorm,
+							doorCfrontAlarm,
+							doorCrearNorm,
+							doorCrearAlarm}
+						STATUS  current
+						DESCRIPTION "door contact alarms"
+						::= { coolTraps 5 }
+
+
+					outputs NOTIFICATION-TYPE
+						OBJECTS {
+							out1Norm,
+							out1NotNorm,
+							out2Norm,
+							out2NotNorm,
+							out3Norm,
+							out3NotNorm,
+							out4Norm,
+							out4NotNorm}
+						STATUS  current
+						DESCRIPTION "digital output state notification"
+						::= { coolTraps 6 }
+
+
+					temperatures NOTIFICATION-TYPE
+						OBJECTS {
+							temp1HighNoWarning,
+							temp1HighWarning,
+							temp1HighNoAlarm,
+							temp1HighAlarm,
+							temp2HighNoWarning,
+							temp2HighWarning,
+							temp2HighNoAlarm,
+							temp2HighAlarm,
+							temp3HighNoWarning,
+							temp3HighWarning,
+							temp3HighNoAlarm,
+							temp3HighAlarm,
+							temp4HighNoWarning,
+							temp4HighWarning,
+							temp4HighNoAlarm,
+							temp4HighAlarm,
+							temp5HighNoWarning,
+							temp5HighWarning,
+							temp5HighNoAlarm,
+							temp5HighAlarm,
+							temp6HighNoWarning,
+							temp6HighWarning,
+							temp6HighNoAlarm,
+							temp6HighAlarm,
+							temp2LowNoAlarm,
+							temp2LowAlarm,
+							coldwaterLowNormal,
+							coldwaterLowAlarm,
+							coldwaterHighNormal,
+							coldwaterHighAlarm,
+							warmwaterLowNormal,
+							warmwaterLowAlarm,
+							warmwaterHighNormal,
+							warmwaterHighAlarm,
+							temp2DoorOpenNorm,
+							temp2DoorOpenAlarm,
+							temp2ServerOFFNorm,
+							temp2ServerOFFAlarm}
+						STATUS  current
+						DESCRIPTION "temperature warnings and alarms"
+						::= { coolTraps 7 }
+
+
+					humidity NOTIFICATION-TYPE
+						OBJECTS {
+							humidityHighNormal,
+							humidityHighAlarm,
+							humidityLowNormal,
+							humidityLowAlarm}
+						STATUS  current
+						DESCRIPTION "relative humidity alarms"
+						::= { coolTraps 8 }
+
+
+					inputs NOTIFICATION-TYPE
+						OBJECTS {
+							in1Low,
+							in1High,
+							in2Low,
+							in2High,
+							in3Low,
+							in3High,
+							in4Low,
+							in4High}
+						STATUS  current
+						DESCRIPTION "digital inputs state notification"
+						::= { coolTraps 9 }
+
+
+					powerMeasurement NOTIFICATION-TYPE
+						OBJECTS {
+							currentRack1ANorm,
+							currentRack1AAlarm,
+							currentRack1BNorm,
+							currentRack1BAlarm,
+							currentRack2ANorm,
+							currentRack2AAlarm,
+							currentRack2BNorm,
+							currentRack2BAlarm,
+							voltageMainsA1Norm,
+							voltageMainsA1Alarm,
+							voltageMainsB1Norm,
+							voltageMainsB1Alarm,
+							voltageMainsA2Norm,
+							voltageMainsA2Alarm,
+							voltageMainsB2Norm,
+							voltageMainsB2Alarm,
+							powerMainsA1Norm,
+							powerMainsA1Alarm,
+							powerMainsB1Norm,
+							powerMainsB1Alarm,
+							powerMainsA2Norm,
+							powerMainsA2Alarm,
+							powerMainsB2Norm,
+							powerMainsB2Alarm}
+						STATUS  current
+						DESCRIPTION "power measurement alarms"
+						::= { coolTraps 10 }
+
+
+				fan1Normal NOTIFICATION-TYPE
+					OBJECTS {
+						fan1Norm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 1 }
+
+
+				fan1NotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						fan1Alarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 2 }
+
+
+				fan2Normal NOTIFICATION-TYPE
+					OBJECTS {
+						fan2Norm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 3 }
+
+
+				fan2NotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						fan2Alarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 4 }
+
+
+				fan3Normal NOTIFICATION-TYPE
+					OBJECTS {
+						fan3Norm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 5 }
+
+
+				fan3NotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						fan3Alarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 6 }
+
+
+				fan4Normal NOTIFICATION-TYPE
+					OBJECTS {
+						fan4Norm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 7 }
+
+
+				fan4NotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						fan4Alarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 8 }
+
+
+				waterNormal NOTIFICATION-TYPE
+					OBJECTS {
+						waterNorm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 9 }
+
+
+				waterNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						waterAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 10 }
+
+
+				smokeNormal NOTIFICATION-TYPE
+					OBJECTS {
+						smokeNorm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 11 }
+
+
+				smokeNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						smokeAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 12 }
+
+
+				mainsANormal NOTIFICATION-TYPE
+					OBJECTS {
+						mainsANorm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 13 }
+
+
+				mainsANotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						mainsAAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 14 }
+
+
+				mainsBNormal NOTIFICATION-TYPE
+					OBJECTS {
+						mainsBNorm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 15 }
+
+
+				mainsBNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						mainsBAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 16 }
+
+
+				smokePreAlarmNormal NOTIFICATION-TYPE
+					OBJECTS {
+						smokePreAlarm1Norm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 17 }
+
+
+				smokePreAlarmNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						smokePreAlarm1Alarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 18 }
+
+
+				smokeMainAlarmNormal NOTIFICATION-TYPE
+					OBJECTS {
+						smokeMainAlarm1Norm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 19 }
+
+
+				smokeMainAlarmNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						smokeMainAlarm1Alarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 20 }
+
+
+				smokeDefectNormal NOTIFICATION-TYPE
+					OBJECTS {
+						smokeDefectNorm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 21 }
+
+
+				smokeDefectNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						smokeDefectAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 22 }
+
+
+				smokeExtinguishedNormal NOTIFICATION-TYPE
+					OBJECTS {
+						smokeExtinguishedNorm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 23 }
+
+
+				smokeExtinguishedNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						smokeExtinguishedAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 24 }
+
+
+				doorLeftFrontNormal NOTIFICATION-TYPE
+					OBJECTS {
+						doorLeftFrontNorm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 25 }
+
+
+				doorLeftFrontNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						doorLeftFrontAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 26 }
+
+
+				doorLeftRearNormal NOTIFICATION-TYPE
+					OBJECTS {
+						doorLeftRearNorm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 27 }
+
+
+				doorLeftRearNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						doorLeftRearAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 28 }
+
+
+				doorRightFrontNormal NOTIFICATION-TYPE
+					OBJECTS {
+						doorRightFrontNorm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 29 }
+
+
+				doorRightFrontNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						doorRightFrontAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 30 }
+
+
+				doorRightRearNormal NOTIFICATION-TYPE
+					OBJECTS {
+						doorRightRearNorm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 31 }
+
+
+				doorRightRearNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						doorRightRearAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 32 }
+
+
+				doorCfrontNormal NOTIFICATION-TYPE
+					OBJECTS {
+						doorCfrontNorm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 33 }
+
+
+				doorCfrontNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						doorCfrontAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 34 }
+
+
+				doorCrearNormal NOTIFICATION-TYPE
+					OBJECTS {
+						doorCrearNorm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 35 }
+
+
+				doorCrearNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						doorCrearAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 36 }
+
+
+				spare1Normal NOTIFICATION-TYPE
+					OBJECTS {
+						smokePreAlarm2Norm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 37 }
+
+
+				spare1NotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						smokePreAlarm2Alarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 38 }
+
+
+				spare2Normal NOTIFICATION-TYPE
+					OBJECTS {
+						smokeMainAlarm2Norm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 39 }
+
+
+				spare2NotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						smokeMainAlarm2Alarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 40 }
+
+
+				out1Normal NOTIFICATION-TYPE
+					OBJECTS {
+						out1Norm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 41 }
+
+
+				out1NotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						out1NotNorm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 42 }
+
+
+				out2Normal NOTIFICATION-TYPE
+					OBJECTS {
+						out2Norm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 43 }
+
+
+				out2NotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						out2NotNorm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 44 }
+
+
+				out3Normal NOTIFICATION-TYPE
+					OBJECTS {
+						out3Norm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 45 }
+
+
+				out3NotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						out3NotNorm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 46 }
+
+
+				out4Normal NOTIFICATION-TYPE
+					OBJECTS {
+						out4Norm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 47 }
+
+
+				out4NotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						out4NotNorm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 48 }
+
+
+				temp1HighWarnNormal NOTIFICATION-TYPE
+					OBJECTS {
+						temp1HighNoWarning}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 49 }
+
+
+				temp1HighWarnNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						temp1HighWarning}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 50 }
+
+
+				temp1HighAlarmNormal NOTIFICATION-TYPE
+					OBJECTS {
+						temp2HighNoAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 51 }
+
+
+				temp1HighAlarmNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						temp2HighAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 52 }
+
+
+				temp2HighWarnNormal NOTIFICATION-TYPE
+					OBJECTS {
+						temp2HighNoWarning}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 53 }
+
+
+				temp2HighWarnNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						temp2HighWarning}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 54 }
+
+
+				temp2HighAlarmNormal NOTIFICATION-TYPE
+					OBJECTS {
+						temp2HighNoAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 55 }
+
+
+				temp2HighAlarmNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						temp2HighAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 56 }
+
+
+				temp3HighWarnNormal NOTIFICATION-TYPE
+					OBJECTS {
+						temp3HighNoWarning}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 57 }
+
+
+				temp3HighWarnNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						temp3HighWarning}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 58 }
+
+
+				temp3HighAlarmNormal NOTIFICATION-TYPE
+					OBJECTS {
+						temp3HighNoAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 59 }
+
+
+				temp3HighAlarmNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						temp2HighAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 60 }
+
+
+				temp4HighWarnNormal NOTIFICATION-TYPE
+					OBJECTS {
+						temp4HighNoWarning}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 61 }
+
+
+				temp4HighWarnNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						temp4HighWarning}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 62 }
+
+
+				temp4HighAlarmNormal NOTIFICATION-TYPE
+					OBJECTS {
+						temp4HighNoAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 63 }
+
+
+				temp4HighAlarmNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						temp4HighAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 64 }
+
+
+				temp5HighWarnNormal NOTIFICATION-TYPE
+					OBJECTS {
+						temp5HighNoWarning}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 65 }
+
+
+				temp5HighWarnNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						temp5HighWarning}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 66 }
+
+
+				temp5HighAlarmNormal NOTIFICATION-TYPE
+					OBJECTS {
+						temp5HighNoAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 67 }
+
+
+				temp5HighAlarmNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						temp5HighAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 68 }
+
+
+				temp6HighWarnNormal NOTIFICATION-TYPE
+					OBJECTS {
+						temp6HighNoWarning}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 69 }
+
+
+				temp6HighWarnNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						temp6HighWarning}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 70 }
+
+
+				temp6HighAlarmNormal NOTIFICATION-TYPE
+					OBJECTS {
+						temp6HighNoAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 71 }
+
+
+				temp6HighAlarmNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						temp6HighAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 72 }
+
+
+				temp1LowAlarmNormal NOTIFICATION-TYPE
+					OBJECTS {
+						temp1LowNoAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 73 }
+
+
+				temp1LowAlarmNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						temp1LowAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 74 }
+
+
+				temp2LowAlarmNormal NOTIFICATION-TYPE
+					OBJECTS {
+						temp2LowNoAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 75 }
+
+
+				temp2LowAlarmNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						temp2LowAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 76 }
+
+
+				humidityHighAlarmNormal NOTIFICATION-TYPE
+					OBJECTS {
+						humidityHighNormal}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 77 }
+
+
+				humidityHighAlarmNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						humidityHighAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 78 }
+
+
+				humidityLowAlarmNormal NOTIFICATION-TYPE
+					OBJECTS {
+						humidityLowNormal}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 79 }
+
+
+				humidityLowAlarmNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						humidityLowAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 80 }
+
+
+				coldwaterLowAlarmNormal NOTIFICATION-TYPE
+					OBJECTS {
+						coldwaterLowNormal}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 81 }
+
+
+				coldwaterLowAlarmNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						coldwaterLowAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 82 }
+
+
+				coldwaterHighAlarmNormal NOTIFICATION-TYPE
+					OBJECTS {
+						coldwaterHighNormal}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 83 }
+
+
+				coldwaterHighAlarmNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						coldwaterHighAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 84 }
+
+
+				warmwaterLowAlarmNormal NOTIFICATION-TYPE
+					OBJECTS {
+						warmwaterLowNormal}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 85 }
+
+
+				warmwaterLowAlarmNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						warmwaterLowAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 86 }
+
+
+				warmwaterHighAlarmNormal NOTIFICATION-TYPE
+					OBJECTS {
+						warmwaterHighNormal}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 87 }
+
+
+				warmwaterHighAlarmNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						warmwaterHighAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 88 }
+
+
+				temp2DoorOpenNormal NOTIFICATION-TYPE
+					OBJECTS {
+						temp2DoorOpenNorm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 89 }
+
+
+				temp2DoorOpenNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						temp2DoorOpenAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 90 }
+
+
+				temp2ServerOFFNormal NOTIFICATION-TYPE
+					OBJECTS {
+						temp2ServerOFFNorm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 91 }
+
+
+				temp2ServerOFFNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						temp2ServerOFFAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 92 }
+
+
+				in1Normal NOTIFICATION-TYPE
+					OBJECTS {
+						in1Low}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 93 }
+
+
+				in1NotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						in1High}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 94 }
+
+
+				in2Normal NOTIFICATION-TYPE
+					OBJECTS {
+						in2Low}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 95 }
+
+
+				in2NotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						in2High}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 96 }
+
+
+				in3Normal NOTIFICATION-TYPE
+					OBJECTS {
+						in3Low}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 97 }
+
+
+				in3NotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						in3High}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 98 }
+
+
+				in4Normal NOTIFICATION-TYPE
+					OBJECTS {
+						in4Low}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 99 }
+
+
+				in4NotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						in4High}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 100 }
+
+
+				currentL1ANormal NOTIFICATION-TYPE
+					OBJECTS {
+						currentRack1ANorm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 101 }
+
+
+				currentL1ANotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						currentRack1AAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 102 }
+
+				
+				currentL2ANormal NOTIFICATION-TYPE
+					OBJECTS {
+						currentRack1ANorm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 103 }
+
+
+				currentL3ANormal NOTIFICATION-TYPE
+					OBJECTS {
+						currentRack1ANorm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 105 }
+
+
+				currentL2ANotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						currentRack1AAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 104 }
+
+
+				currentL3ANotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						currentRack1AAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 106 }
+
+
+				currentL1BNormal NOTIFICATION-TYPE
+					OBJECTS {
+						currentRack1BNorm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 107 }
+
+
+
+				currentL1BNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						currentRack1BAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 108 }
+					
+				currentL2BNormal NOTIFICATION-TYPE
+					OBJECTS {
+						currentRack1BNorm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 109 }
+
+					
+				currentL2BNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						currentRack1BAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 110 }
+
+				currentL3BNormal NOTIFICATION-TYPE
+					OBJECTS {
+						currentRack1BNorm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 111 }
+
+				currentL3BNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						currentRack1BAlarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 112 }
+						
+
+				voltageMainsANormal NOTIFICATION-TYPE
+					OBJECTS {
+						voltageMainsA1Norm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 113 }
+
+
+				voltageMainsANotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						voltageMainsA1Alarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 114 }
+
+
+				voltageMainsBNormal NOTIFICATION-TYPE
+					OBJECTS {
+						voltageMainsB1Norm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 115 }
+
+
+				voltageMainsBNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						voltageMainsB1Alarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 116 }
+
+
+				powerMainsANormal NOTIFICATION-TYPE
+					OBJECTS {
+						powerMainsA1Norm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 117 }
+
+
+				powerMainsANotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						powerMainsA1Alarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 118 }
+
+
+				powerMainsBNormal NOTIFICATION-TYPE
+					OBJECTS {
+						powerMainsB1Norm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 119 }
+
+
+				powerMainsBNotNormal NOTIFICATION-TYPE
+					OBJECTS {
+						powerMainsB1Alarm}
+					STATUS  current
+					DESCRIPTION ""
+					::= { coolTrap 120 }
+
+
+
+-- trap varbind OIDs (first version)
+	
+			coolTrapMsg OBJECT IDENTIFIER 	::= { coolControl 7 }
+
+				coolTrapMsgs OBJECT IDENTIFIER 	::= { coolTrapMsg 1 }
+
+					fan1Norm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 1 }
+
+
+					fan1Alarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 2 }
+
+
+					fan2Norm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 3 }
+
+
+					fan2Alarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 4 }
+
+
+					fan3Norm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 5 }
+
+
+					fan3Alarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 6 }
+
+
+					fan4Norm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 7 }
+
+
+					fan4Alarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 8 }
+
+
+					waterNorm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 9 }
+
+
+					waterAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 10 }
+
+
+					smokeNorm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 11 }
+
+
+					smokeAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 12 }
+
+
+					mainsANorm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 13 }
+
+
+					mainsAAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 14 }
+
+
+					mainsBNorm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 15 }
+
+
+					mainsBAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 16 }
+
+
+					smokePreAlarm1Norm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 17 }
+
+
+					smokePreAlarm1Alarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 18 }
+
+
+					smokeMainAlarm1Norm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 19 }
+
+
+					smokeMainAlarm1Alarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 20 }
+
+
+					smokeDefectNorm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 21 }
+
+
+					smokeDefectAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 22 }
+
+
+					smokeExtinguishedNorm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 23 }
+
+
+					smokeExtinguishedAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 24 }
+
+
+					doorLeftFrontNorm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 25 }
+
+
+					doorLeftFrontAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 26 }
+
+
+					doorLeftRearNorm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 27 }
+
+
+					doorLeftRearAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 28 }
+
+
+					doorRightFrontNorm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 29 }
+
+
+					doorRightFrontAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 30 }
+
+
+					doorRightRearNorm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 31 }
+
+
+					doorRightRearAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 32 }
+
+
+					doorCfrontNorm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 33 }
+
+
+					doorCfrontAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 34 }
+
+
+					doorCrearNorm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 35 }
+
+
+					doorCrearAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 36 }
+
+
+					smokePreAlarm2Norm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 37 }
+
+
+					smokePreAlarm2Alarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 38 }
+
+
+					smokeMainAlarm2Norm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 39 }
+
+
+					smokeMainAlarm2Alarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 40 }
+
+
+					out1Norm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 41 }
+
+
+					out1NotNorm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 42 }
+
+
+					out2Norm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 43 }
+
+
+					out2NotNorm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 44 }
+
+
+					out3Norm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 45 }
+
+
+					out3NotNorm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 46 }
+
+
+					out4Norm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 47 }
+
+
+					out4NotNorm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 48 }
+
+
+					temp1HighNoWarning OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 49 }
+
+
+					temp1HighWarning OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 50 }
+
+
+					temp1HighNoAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 51 }
+
+
+					temp1HighAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 52 }
+
+
+					temp2HighNoWarning OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 53 }
+
+
+					temp2HighWarning OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 54 }
+
+
+					temp2HighNoAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 55 }
+
+
+					temp2HighAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 56 }
+
+
+					temp3HighNoWarning OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 57 }
+
+
+					temp3HighWarning OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 58 }
+
+
+					temp3HighNoAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 59 }
+
+
+					temp3HighAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 60 }
+
+
+					temp4HighNoWarning OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 61 }
+
+
+					temp4HighWarning OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 62 }
+
+
+					temp4HighNoAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 63 }
+
+
+					temp4HighAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 64 }
+
+
+					temp5HighNoWarning OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 65 }
+
+
+					temp5HighWarning OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 66 }
+
+
+					temp5HighNoAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 67 }
+
+
+					temp5HighAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 68 }
+
+
+					temp6HighNoWarning OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 69 }
+
+
+					temp6HighWarning OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 70 }
+
+
+					temp6HighNoAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 71 }
+
+
+					temp6HighAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 72 }
+
+
+					temp1LowNoAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 73 }
+
+
+					temp1LowAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 74 }
+
+
+					temp2LowNoAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 75 }
+
+
+					temp2LowAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 76 }
+
+
+					humidityHighNormal OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 77 }
+
+
+					humidityHighAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 78 }
+
+
+					humidityLowNormal OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 79 }
+
+
+					humidityLowAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 80 }
+
+
+					coldwaterLowNormal OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 81 }
+
+
+					coldwaterLowAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 82 }
+
+
+					coldwaterHighNormal OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 83 }
+
+
+					coldwaterHighAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 84 }
+
+
+					warmwaterLowNormal OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 85 }
+
+
+					warmwaterLowAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 86 }
+
+
+					warmwaterHighNormal OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 87 }
+
+
+					warmwaterHighAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 88 }
+
+
+					temp2DoorOpenNorm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 89 }
+
+
+					temp2DoorOpenAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 90 }
+
+
+					temp2ServerOFFNorm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 91 }
+
+
+					temp2ServerOFFAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 92 }
+
+
+					in1Low OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 93 }
+
+
+					in1High OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 94 }
+
+
+					in2Low OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 95 }
+
+
+					in2High OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 96 }
+
+
+					in3Low OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 97 }
+
+
+					in3High OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 98 }
+
+
+					in4Low OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 99 }
+
+
+					in4High OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 100 }
+
+
+					currentRack1ANorm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 101 }
+
+
+					currentRack1AAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 102 }
+
+
+					currentRack1BNorm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 103 }
+
+
+					currentRack1BAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 104 }
+
+
+					currentRack2ANorm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 105 }
+
+
+					currentRack2AAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 106 }
+
+
+					currentRack2BNorm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 107 }
+
+
+					currentRack2BAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 108 }
+
+
+					voltageMainsA1Norm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 109 }
+
+
+					voltageMainsA1Alarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 110 }
+
+
+					voltageMainsB1Norm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 111 }
+
+
+					voltageMainsB1Alarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 112 }
+
+
+					voltageMainsA2Norm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 113 }
+
+
+					voltageMainsA2Alarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 114 }
+
+
+					voltageMainsB2Norm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 115 }
+
+
+					voltageMainsB2Alarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 116 }
+
+
+					powerMainsA1Norm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 117 }
+
+					powerMainsA1Alarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 118 }
+
+					powerMainsB1Norm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 119 }
+
+					powerMainsB1Alarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 120 }
+
+					powerMainsA2Norm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 121 }
+
+
+					powerMainsA2Alarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 122 }
+
+
+					powerMainsB2Norm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 123 }
+
+
+					powerMainsB2Alarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 124 }
+
+					fanStopNorm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 125 }
+
+					fanStopAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 126 }
+							
+					leakageNorm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 127 }
+
+					leakageAlarm OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION ""
+						::= { coolTrapMsgs 128 }
+						
+						
+
+
+				coolTrapWAlarm OBJECT IDENTIFIER 	::= { coolTrapMsg 2 }
+
+					alarmAdded OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS accessible-for-notify
+						STATUS  current
+						DESCRIPTION "An alarm is occured."
+						::= { coolTrapWAlarm 1 }
+
+					alarmRemoved OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS accessible-for-notify
+						STATUS  current
+						DESCRIPTION "An alarm is removed."
+						::= { coolTrapWAlarm 2 }
+
+					alarmStateP OBJECT-TYPE
+						SYNTAX  AlarmState
+						MAX-ACCESS accessible-for-notify
+						STATUS  current
+						DESCRIPTION "The current alarm state."
+						::= { coolTrapWAlarm 3 }
+
+
+
+
+
+						
+						
+							
+							
+						
+	
+
+-- Trap Bereich 2011
+
+			coolTrapW OBJECT IDENTIFIER 	::= { coolControl 8 }
+
+				coolTrapsW OBJECT IDENTIFIER 	::= { coolTrapW 0 }
+
+					fan1 NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Fan 1 error has changed his state."
+						::= { coolTrapsW 1 }
+
+					fan2 NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Fan 2 error has changed his state."
+						::= { coolTrapsW 2 }
+
+					fan3 NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Fan 3 error has changed his state."
+						::= { coolTrapsW 3 }
+
+					fan4 NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Fan 4 error has changed his state."
+						::= { coolTrapsW 4 }
+
+					watersensor NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Watersensor has changed his state."
+						::= { coolTrapsW 5 }
+
+					smokesensor NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Smokesensor has changed his state."
+						::= { coolTrapsW 6 }
+
+					mainsA NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Supply mains A has changed his state."
+						::= { coolTrapsW 7 }
+
+					mainsB NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Supply mains B has changed his state."
+						::= { coolTrapsW 8 }
+
+					firePreAlarm1 NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Fire extinguishing system pre alarm 1 has changed his state."
+						::= { coolTrapsW 9 }
+
+					fireMainAlarm1 NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Fire extinguishing system main alarm 1 has changed his state."
+						::= { coolTrapsW 10 }
+
+					fireError NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Fire extinguishing system error has changed his state."
+						::= { coolTrapsW 11 }
+
+					fireExtinguished NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Fire extinguishing system released has changed his state."
+						::= { coolTrapsW 12 }
+
+					doorLfront NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Door front rack left has changed his state."
+						::= { coolTrapsW 13 }
+
+					doorLrear NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Door rear rack left has changed his state."
+						::= { coolTrapsW 14 }
+
+					doorRfront NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Door front rack right has changed his state."
+						::= { coolTrapsW 15 }
+
+					doorRrear NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Door rear rack right has changed his state."
+						::= { coolTrapsW 16 }
+
+					doorCfront NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Door front CL/CT has changed his state."
+						::= { coolTrapsW 17 }
+
+					doorCrear NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Door rear CL/CT has changed his state."
+						::= { coolTrapsW 18 }
+
+					firePreAlarm2 NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Fire extinguishing system pre alarm 2 has changed his state."
+						::= { coolTrapsW 19 }
+
+					fireMainAlarm2 NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Fire extinguishing system main alarm 2 has changed his state."
+						::= { coolTrapsW 20 }
+
+					digOut1 NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Digital output 1 has changed his state."
+						::= { coolTrapsW 21 }
+
+					digOut2 NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Digital output 2 has changed his state."
+						::= { coolTrapsW 22 }
+
+					digOut3 NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Digital output 3 has changed his state."
+						::= { coolTrapsW 23 }
+
+					digOut4 NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Digital output 4 has changed his state."
+						::= { coolTrapsW 24 }
+
+					temp1HiWarn NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Return air temperature high warning has changed his state."
+						::= { coolTrapsW 25 }
+
+					temp1HiAlarm1 NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Return air temperature high alarm has changed his state."
+						::= { coolTrapsW 26 }
+
+					temp2HiWarn NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Supply air temperature high warning has changed his state."
+						::= { coolTrapsW 27 }
+
+					temp2HiAlarm1 NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Supply air temperature high alarm 1 has changed his state."
+						::= { coolTrapsW 28 }
+
+					temp3HiWarn NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Temperature 3 high warning has changed his state."
+						::= { coolTrapsW 29 }
+
+					temp3HiAlarm1 NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Temperature 3 high alarm has changed his state."
+						::= { coolTrapsW 30 }
+
+					temp4HiWarn NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Temperature 4 high warning has changed his state."
+						::= { coolTrapsW 31 }
+
+					temp4HiAlarm1 NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Temperature 4 high alarm has changed his state."
+						::= { coolTrapsW 32 }
+
+					temp5HiWarn NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Temperature 5 high warning has changed his state."
+						::= { coolTrapsW 33 }
+
+					temp5HiAlarm1 NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Temperature 5 high alarm has changed his state."
+						::= { coolTrapsW 34 }
+
+					temp6HiWarn NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Temperature 6 high warning has changed his state."
+						::= { coolTrapsW 35 }
+
+					temp6HiAlarm1 NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Temperature 6 high alarm has changed his state."
+						::= { coolTrapsW 36 }
+
+					temp1LoAlarm NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Return air temperature lower alarm has changed his state."
+						::= { coolTrapsW 37 }
+						
+					temp2LoAlarm NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Supply air temperature lower alarm has changed his state."
+						::= { coolTrapsW 38 }
+
+						
+					humidityHiAlarm NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Humidity high limit has changed his state."
+						::= { coolTrapsW 39 }
+
+					humidityLoAlarm NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Humidity lower limit has changed his state."
+						::= { coolTrapsW 40 }
+
+					supWaterLoTempAlarm NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Supply water lower temperature limit has changed his state."
+						::= { coolTrapsW 41 }
+
+					supWaterHiTempAlarm NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Supply water high temperature limit has changed his state."
+						::= { coolTrapsW 42 }
+
+					retWaterLoTempAlarm NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Return water lower temperature limit has changed his state."
+						::= { coolTrapsW 43 }
+
+					retWaterHiTempAlarm NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Return water high temperature limit has changed his state."
+						::= { coolTrapsW 44 }
+
+					temp2dDoorsOpenAlarm NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Supply air temperature doors open alarm has changed his state."
+						::= { coolTrapsW 45 }
+
+					temp2ServerOffAlarm NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Supply air temperature server OFF alarm has changed his state."
+						::= { coolTrapsW 46 }
+
+					digIn1 NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Digital input 1 has changed his state."
+						::= { coolTrapsW 47 }
+
+					digIn2 NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Digital input 2 has changed his state."
+						::= { coolTrapsW 48 }
+
+					digIn3 NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Digital input 3 has changed his state."
+						::= { coolTrapsW 49 }
+
+					digIn4 NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Digital input 4 has changed his state."
+						::= { coolTrapsW 50 }
+
+					currentRackLA NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Current limit has changed his state."
+						::= { coolTrapsW 51 }
+
+					currentRackLB NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Current limit has changed his state."
+						::= { coolTrapsW 52 }
+
+					currentRackRA NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Current limit has changed his state."
+						::= { coolTrapsW 53 }
+
+					currentRackRB NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Current limit has changed his state."
+						::= { coolTrapsW 54 }
+
+					voltageRackLA NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Voltage limit has changed his state."
+						::= { coolTrapsW 55 }
+
+					voltageRackLB NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Voltage limit has changed his state."
+						::= { coolTrapsW 56 }
+
+					voltageRackRA NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Voltage limit has changed his state."
+						::= { coolTrapsW 57 }
+
+					voltageRackRB NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Voltage limit has changed his state."
+						::= { coolTrapsW 58 }
+
+					powerRackLA NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Power consumption limit has changed his state."
+						::= { coolTrapsW 59 }
+
+					powerRackLB NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Power consumption limit has changed his state."
+						::= { coolTrapsW 60 }
+
+					powerRackRA NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Power consumption limit has changed his state."
+						::= { coolTrapsW 61 }
+
+					powerRackRB NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Power consumption limit has changed his state."
+						::= { coolTrapsW 62 }
+
+					digIn5 NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Digital input 5 has changed his state."
+						::= { coolTrapsW 63 }
+
+					digIn6 NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Digital input 6 has changed his state."
+						::= { coolTrapsW 64 }
+
+					digIn7 NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Digital input 7 has changed his state."
+						::= { coolTrapsW 65 }
+
+					digIn8 NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Digital input 8 has changed his state."
+						::= { coolTrapsW 66 }
+
+					fanStop NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"The fanStop mode has changed his state."
+						::= { coolTrapsW 67 }
+
+					leakageSensor NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Leakagesensor has changed his state."
+						::= { coolTrapsW 68 }
+
+					condensatePump NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"Condensate pump has changed his state."
+						::= { coolTrapsW 69 }
+
+					externalContact1 NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"External contact 1 (user defined) has changed his state."
+						::= { coolTrapsW 70 }
+
+					externalContact2 NOTIFICATION-TYPE
+						OBJECTS { alarmStateP }
+						STATUS  current
+						DESCRIPTION
+							"External contact 2 (user defined) has changed his state."
+						::= { coolTrapsW 71 }
+
+
+			-- events (arrInputs[])	
+				
+			coolEvent OBJECT IDENTIFIER 	::= { coolControl 9 }
+
+				eventStates OBJECT IDENTIFIER 	::= { coolEvent 1 }
+
+					fan1Fault OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of fan 1."
+						::= { eventStates 1 }
+
+					fan2Fault OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of fan 2."
+						::= { eventStates 2 }
+
+					fan3Fault OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of fan 3."
+						::= { eventStates 3 }
+
+					fan4Fault OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of fan 4."
+						::= { eventStates 4 }
+
+					waterSensorAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of water sensor."
+						::= { eventStates 5 }
+
+					smokeSensorAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of smoke sensor."
+						::= { eventStates 6 }
+
+					powerSupplyAAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of power supply mains A."
+						::= { eventStates 7 }
+
+					powerSupplyBAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of power supply mains B."
+						::= { eventStates 8 }
+					
+					vesdaPreAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of VESDA pre alarm."
+						::= { eventStates 9 }
+
+					vesdaMainAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of VESDA main alarm."
+						::= { eventStates 10 }
+
+					vesdaFaultAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of VESDA fault."
+						::= { eventStates 11 }
+
+					vesdaReleasedAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of VESDA distinguishing released."
+						::= { eventStates 12 }
+
+					doorA100FrontAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of door contact front at rack +A100."
+						::= { eventStates 13 }
+
+					doorA100RearAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of door contact rear at rack +A100."
+						::= { eventStates 14 }
+
+					doorA200FrontAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of door contact front at rack +A200."
+						::= { eventStates 15 }
+
+					doorA200RearAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of door contact rear at rack +A200."
+						::= { eventStates 16 }
+
+					doorCFrontAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of door contact front at CL/CT."
+						::= { eventStates 17 }
+
+					doorCRearAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of door contact rear at CL/CT."
+						::= { eventStates 18 }
+
+					vesdaPre2Alarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of VESDA pre alarm 2."
+						::= { eventStates 19 }
+
+					vesdaMain2Alarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of VESDA main alarm 2."
+						::= { eventStates 20 }
+
+					digitalOutput1Alarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of costumer digital output 1."
+						::= { eventStates 21 }
+
+					digitalOutput2Alarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of costumer digital output 2."
+						::= { eventStates 22 }
+
+					digitalOutput3Alarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of costumer digital output 3."
+						::= { eventStates 23 }
+
+					digitalOutput4Alarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of costumer digital output 4."
+						::= { eventStates 24 }
+
+					returnAirTempWarning OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of return air temperature high warning limit."
+						::= { eventStates 25 }
+
+					returnAirTempAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of return air temperature high alarm limit."
+						::= { eventStates 26 }
+
+					supplyAirTempWarning OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of supply air temperature high warning limit."
+						::= { eventStates 27 }
+
+					supplyAirTempAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of supply air temperature high alarm limit."
+						::= { eventStates 28 }
+
+					temp3Warning OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of air temperature 3 high warning limit."
+						::= { eventStates 29 }
+
+					temp3Alarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of air temperature 3 high alarm limit."
+						::= { eventStates 30 }
+
+					temp4Warning OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of air temperature 4 high warning limit."
+						::= { eventStates 31 }
+
+					temp4Alarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of air temperature 4 high alarm limit."
+						::= { eventStates 32 }
+
+					temp5Warning OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of air temperature 5 high warning limit."
+						::= { eventStates 33 }
+
+					temp5Alarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of air temperature 5 high alarm limit."
+						::= { eventStates 34 }
+
+					temp6Warning OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of air temperature 6 high warning limit."
+						::= { eventStates 35 }
+
+					temp6Alarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of air temperature 6 high alarm limit."
+						::= { eventStates 36 }
+
+					returnAirTempLowAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of return air temperature low limit."
+						::= { eventStates 37 }
+
+					supplyAirTempLowAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of supply air temperature low limit."
+						::= { eventStates 38 }
+
+					humidityHigherAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of humidity high limit."
+						::= { eventStates 39 }
+
+					humidityLowerAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of humidity low limit."
+						::= { eventStates 40 }
+
+					supplyWaterTempLowAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of supply water temperature low limit."
+						::= { eventStates 41 }
+
+					supplyWaterTempHighAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of supply water temperature high limit."
+						::= { eventStates 42 }
+
+					returnWaterTempLowAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of return water temperature low limit."
+						::= { eventStates 43 }
+
+					returnWaterTempHighAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of return water temperature high limit."
+						::= { eventStates 44 }
+
+					supplyAirTempDoorOpenAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of supply air temperature limit for door opening."
+						::= { eventStates 45 }
+
+					supplyAirTempServerOffAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of supply air temperature limit for server switch off."
+						::= { eventStates 46 }
+
+					digitalInput1Alarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of costumer digital input 1."
+						::= { eventStates 47 }
+
+					digitalInput2Alarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of costumer digital input 2."
+						::= { eventStates 48 }
+
+					digitalInput3Alarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of costumer digital input 3."
+						::= { eventStates 49 }
+
+					digitalInput4Alarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of costumer digital input 4."
+						::= { eventStates 50 }
+
+					overCurrentA100GridAAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of over-current grid A in rack +A100."
+						::= { eventStates 51 }
+
+					overCurrentA100GridBAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of over-current grid B in rack +A100."
+						::= { eventStates 52 }
+
+					overCurrentA200GridAAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of over-current grid A in rack +A200."
+						::= { eventStates 53 }
+
+					overCurrentA200GridBAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of over-current grid B in rack +A200."
+						::= { eventStates 54 }
+
+					voltageLossA100GridAAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of voltage loss grid A in rack +A100."
+						::= { eventStates 55 }
+
+					voltageLossA100GridBAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of voltage loss grid B in rack +A100."
+						::= { eventStates 56 }
+
+					voltageLossA200GridAAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of voltage loss grid A in rack +A200."
+						::= { eventStates 57 }
+
+					voltageLossA200GridBAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of voltage loss grid B in rack +A200."
+						::= { eventStates 58 }
+
+					overLoadA100GridAAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of electrical power overload grid A in rack +A100."
+						::= { eventStates 59 }
+
+					overLoadA100GridBAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of electrical power overload grid B in rack +A100."
+						::= { eventStates 60 }
+
+					overLoadA200GridAAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of electrical power overload grid A in rack +A200."
+						::= { eventStates 61 }
+
+					overLoadA200GridBAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of electrical power overload grid B in rack +A200."
+						::= { eventStates 62 }
+
+					digitalInput5Alarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of costumer digital input 5."
+						::= { eventStates 63 }
+
+					digitalInput6Alarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of costumer digital input 6."
+						::= { eventStates 64 }
+
+					digitalInput7Alarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of costumer digital input 7."
+						::= { eventStates 65 }
+
+					digitalInput8Alarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of costumer digital input 8."
+						::= { eventStates 66 }
+
+					fanStopMode OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of fan stop mode."
+						::= { eventStates 67 }
+
+					leakageSensorAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of leakage sensor."
+						::= { eventStates 68 }
+
+					condensatePumpAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of condensate pump."
+						::= { eventStates 69 }
+
+					externalContact1Alarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of special external contact 1."
+						::= { eventStates 70 }
+
+					externalContact2Alarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of special external contact 2."
+						::= { eventStates 71 }
+
+					climaWarning OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of clima warning (only in cha mode)."
+						::= { eventStates 72 }
+
+					climaAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of clima alarm (only in cha mode)."
+						::= { eventStates 73 }
+
+					coldWaterAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of cold water (only in cha mode)."
+						::= { eventStates 74 }
+
+					serverOffAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of server switch off."
+						::= { eventStates 75 }
+
+					busErrorAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of internal bus (InterBus)."
+						::= { eventStates 76 }
+
+					flowAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of water flow (alarm if minimum flow not reached)."
+						::= { eventStates 77 }
+
+					flowFaultAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of flow sensor (alarm if sensor broken)."
+						::= { eventStates 78 }
+
+					doorCTAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of door alarm CoolTherm (front closed and rear open)."
+						::= { eventStates 79 }
+
+					sensorFaultAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of sensor fault."
+						::= { eventStates 80 }
+
+					serverOffFeedbackA100Alarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of server off feedback rack +A100."
+						::= { eventStates 81 }
+
+					serverOffFeedbackA200Alarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of server off feedback rack +A200."
+						::= { eventStates 82 }
+
+					powerSegmentAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of power supply options or costumer I/O."
+						::= { eventStates 83 }
+
+					fan5Fault OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of fan 5."
+						::= { eventStates 84 }
+
+					fan6Fault OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of fan 6."
+						::= { eventStates 85 }
+
+					undef86Alarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of undefined-86."
+						::= { eventStates 86 }
+
+					undef87Alarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of undefined-87."
+						::= { eventStates 87 }
+
+					undef88Alarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of undefined-88."
+						::= { eventStates 88 }
+
+					undef89Alarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of undefined-89."
+						::= { eventStates 89 }
+
+					undef90Alarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of undefined-90."
+						::= { eventStates 90 }
+
+					undef91Alarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of undefined-91."
+						::= { eventStates 91 }
+
+					undef92Alarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of undefined-92."
+						::= { eventStates 92 }
+
+					undef93Alarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of undefined-93."
+						::= { eventStates 93 }
+
+					undef94Alarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of undefined-94."
+						::= { eventStates 94 }
+
+					summaryAlarm OBJECT-TYPE
+						SYNTAX  DigitalState
+						MAX-ACCESS read-only
+						STATUS  current
+						DESCRIPTION
+							"Current state of summary alarm."
+						::= { eventStates 95 }
+
+						
+						
+				-- new Trap format 2013
+				eventTrap OBJECT IDENTIFIER 	::= { coolEvent 0 }
+
+					eventRemoved NOTIFICATION-TYPE
+						OBJECTS { eventStates }
+						STATUS  current
+						DESCRIPTION
+							"An event has changed to normal state."
+						::= { eventTrap 0 }
+
+					eventAdded NOTIFICATION-TYPE
+						OBJECTS { eventStates }
+						STATUS  current
+						DESCRIPTION
+							"An event has changed to alarm state."
+						::= { eventTrap 1 }
+						
+
+				-- new Trap state 2013
+				eventTrapState OBJECT IDENTIFIER 	::= { coolEvent 2 }
+
+					eventOff OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS accessible-for-notify
+						STATUS  current
+						DESCRIPTION "An alarm is disappeard."
+						::= { eventTrapState 1 }
+
+					eventOn OBJECT-TYPE
+						SYNTAX  OBJECT IDENTIFIER
+						MAX-ACCESS accessible-for-notify
+						STATUS  current
+						DESCRIPTION "An alarm is occured."
+						::= { eventTrapState 2 }
+
+	
+
+
+END
